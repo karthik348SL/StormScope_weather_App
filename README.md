@@ -49,8 +49,7 @@ StormScope transforms raw weather data into actionable intelligence. Whether you
 ### Today's Highlights & Forecast Metrics
 ![Detailed weather forecast section showing What to expect next for next 6 hours with four forecast cards: feels-like section displaying 34°C temperature indicating 5° warmer than measured air temperature with moisture information and humidity 80% plus cloud cover 89% indicators, rain outlook card showing 3% precipitation probability with 0.0 mm expected across next 6 hours, wind gusts card displaying 26 km/h strongest push from NW at exposed spots with sustained 18 km/h wind speed and 1009 hPa pressure, and daylight window showing 12h 22m total with sunrise 6:20 AM and sunset 6:42 PM] 
 
-<img width="1923" height="943" alt="Screenshot 2026-04-11 204649" src="https://github.com/user-attachments/assets/cbc6f589-3841-4e62-bb68-db8e6c94c669" />
-
+<img width="1904" height="883" alt="Screenshot 2026-04-11 204838" src="https://github.com/user-attachments/assets/b7da6bbd-bf71-4cec-ba96-71e34d3d41c9" />
 
 ### Interactive Weather Layers Map
 ![Advanced weather mapping interface showing Weather Layers with temperature, clouds, wind, precipitation options, interactive map visualization of South India with color-coded temperature gradient scale ranging from cold blue through cool green to mild yellow, warm orange, and hot red zones, featuring cities like Bengaluru, Mysuru, Coimbatore and surrounding regions, zoom in and out controls]
