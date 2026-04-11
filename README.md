@@ -67,7 +67,8 @@ StormScope transforms raw weather data into actionable intelligence. Whether you
 ### Extended 7-Day Forecast & Weather Notifications
 ![Split view showing left panel with 7-Day Trend extended forecast listing seven days with daily weather conditions, precipitation probability, wind speed, and temperature ranges, right panel displays Notifications settings for Weather alerts with toggles for enable weather notifications, rain watches, heat alerts, cold alerts, air quality alerts, and daily briefing time set to 07:00 AM]
 
-<img width="942" height="352" alt="Screenshot 2026-04-11 204754" src="https://github.com/user-attachments/assets/33e8425e-47eb-4a93-9b32-88f0819bd612" />
+<img width="1904" height="883" alt="Screenshot 2026-04-11 204838" src="https://github.com/user-attachments/assets/45ad383f-2ded-45dc-9e93-078360a1a3d2" />
+
 
 
 
