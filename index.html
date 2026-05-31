@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StormScope - Live Weather Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero-panel">
+        <p class="eyebrow">Live weather intelligence</p>
+        <h1>StormScope</h1>
+        <form class="search-row" id="searchForm">
+          <label class="sr-only" for="cityInput">Search city, town, or postcode</label>
+          <div class="search-input-wrapper">
+            <span class="search-input-icon"></span>
+            <input id="cityInput" type="search" placeholder="Search city, town, or postal code" autocomplete="off" />
+            <ul id="searchSuggestions" class="search-suggestions" style="display: none;"></ul>
+          </div>
+          <button type="button" class="primary-button" id="liveLocationButton">Use live location</button>
+          <button type="button" class="ghost-button" id="refreshButton">Refresh</button>
+        </form>
+      </header>
+
+      <main>
+        <div class="status-pills">
+          <span id="updatedPill">Loading live weather...</span>
+          <span id="sourcePill">Detecting location</span>
+          <span id="visibilityPill">Visibility -- km</span>
+          <span id="apiPill">OpenWeatherMap API</span>
+        </div>
+
+        <section class="dashboard-grid">
+          <div class="left-column">
+            <section class="current-panel">
+              <div class="current-copy">
+                <p class="eyebrow" id="locationMode">Current API weather</p>
+                <h2 id="placeName">Your location</h2>
+                <p class="date-line" id="dateLine">--</p>
+                <div class="temperature-row">
+                  <div class="weather-symbol" id="weatherSymbol" aria-hidden="true"></div>
+                  <strong id="temperature">--</strong>
+                  <span>C</span>
+                </div>
+                <p class="condition" id="conditionText">Fetching conditions</p>
+                <p class="weather-note" id="weatherNote">Live readings will appear here.</p>
+                <p class="location-help" id="locationHelp">Allow browser location for precise local weather.</p>
+              </div>
+
+              <div class="mini-metrics">
+                <article>
+                  <span>Humidity</span>
+                  <strong id="humidity">--%</strong>
+                </article>
+                <article>
+                  <span>Precipitation</span>
+                  <strong id="precipitation">-- mm</strong>
+                </article>
+                <article>
+                  <span>Cloud cover</span>
+                  <strong id="cloudCover">--%</strong>
+                </article>
+                <article>
+                  <span>Pressure</span>
+                  <strong id="pressure">-- hPa</strong>
+                </article>
+                <article>
+                  <span>Sunrise</span>
+                  <strong id="sunrise">--</strong>
+                </article>
+                <article>
+                  <span>Sunset</span>
+                  <strong id="sunset">--</strong>
+                </article>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Today's highlights</p>
+                  <h2>What to expect next</h2>
+                </div>
+                <span id="highlightScope">Next 6 hours</span>
+              </div>
+              <div class="highlight-grid">
+                <article class="highlight-card">
+                  <div class="card-top">
+                    <span class="dot aqua"></span>
+                    <p>Feels like</p>
+                    <em id="comfortTag">Comfort</em>
+                  </div>
+                  <strong id="feelsLike">-- C</strong>
+                  <p id="feelsLikeText">Calculating comfort level.</p>
+                  <div class="card-tags">
+                    <span id="humidityTag">Humidity --%</span>
+                    <span id="cloudTag">Cloud cover --%</span>
+                  </div>
+                  <div class="meter"><i id="comfortMeter"></i></div>
+                </article>
+
+                <article class="highlight-card">
+                  <div class="card-top">
+                    <span class="dot cyan"></span>
+                    <p>Rain outlook</p>
+                    <em>Near-term</em>
+                  </div>
+                  <strong id="rainOutlook">--%</strong>
+                  <p id="rainText">Checking rain risk across the next 6 hours.</p>
+                  <div class="card-tags">
+                    <span>Peak chance</span>
+                    <span>6 hourly points</span>
+                  </div>
+                  <div class="meter"><i id="rainMeter"></i></div>
+                </article>
+
+                <article class="highlight-card">
+                  <div class="card-top">
+                    <span class="dot violet"></span>
+                    <p>Wind gusts</p>
+                    <em>Movement</em>
+                  </div>
+                  <strong id="windGust">-- km/h</strong>
+                  <p id="windText">Reading wind direction and gust strength.</p>
+                  <div class="card-tags">
+                    <span id="windSustained">Sustained -- km/h</span>
+                    <span id="pressureTag">-- hPa</span>
+                  </div>
+                  <div class="meter"><i id="windMeter"></i></div>
+                </article>
+
+                <article class="highlight-card">
+                  <div class="card-top">
+                    <span class="dot amber"></span>
+                    <p>Daylight window</p>
+                    <em>Sun cycle</em>
+                  </div>
+                  <strong id="daylight">--</strong>
+                  <p id="daylightText">Sunrise and sunset will update from live data.</p>
+                  <div class="card-tags">
+                    <span id="uvTag">UV max --</span>
+                    <span id="visibilityTag">Visibility -- km</span>
+                  </div>
+                  <div class="meter"><i id="daylightMeter"></i></div>
+                </article>
+              </div>
+            </section>
+          </div>
+
+          <aside class="right-column">
+            <section class="panel watch-panel">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Watchlist</p>
+                  <h2>Saved cities</h2>
+                </div>
+                <span id="liveBadge">Detecting location</span>
+              </div>
+              <div class="city-list" id="savedCities"></div>
+            </section>
+
+            <section class="panel">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Recent places</p>
+                  <h2>Jump back in</h2>
+                </div>
+              </div>
+              <div class="city-list" id="recentPlaces"></div>
+            </section>
+          </aside>
+        </section>
+
+        <section class="panel map-panel">
+          <div class="section-heading map-heading">
+            <div>
+              <p class="eyebrow">Weather layers</p>
+              <h2>Temperature, clouds, wind, precipitation</h2>
+            </div>
+            <div class="layer-pills">
+              <span class="live-layer">Live layer</span>
+              <span id="layerDescription">Surface temperature field</span>
+              <span id="mapTemp">-- C</span>
+              <span id="mapUpdated">Updated --</span>
+            </div>
+          </div>
+          <div class="tabs" id="layerTabs">
+            <button class="active" type="button" data-layer="temperature">Temperature</button>
+            <button type="button" data-layer="clouds">Clouds</button>
+            <button type="button" data-layer="wind">Wind</button>
+            <button type="button" data-layer="precipitation">Precipitation</button>
+          </div>
+          <div id="weatherMap" class="weather-map" aria-label="Live weather map"></div>
+          <div class="legend">
+            <i></i>
+            <div>
+              <span>Cold</span>
+              <span>Cool</span>
+              <span>Mild</span>
+              <span>Warm</span>
+              <span>Hot</span>
+            </div>
+          </div>
+          <p class="map-caption" id="mapCaption">Map will center on the selected live location.</p>
+        </section>
+
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Next 24 hours</p>
+              <h2>Hourly outlook</h2>
+            </div>
+          </div>
+          <div class="hourly-strip" id="hourlyStrip"></div>
+        </section>
+
+        <section class="forecast-alert-grid">
+          <section class="panel">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">7-day trend</p>
+                <h2>Extended forecast</h2>
+              </div>
+            </div>
+            <div class="forecast-list" id="forecastList"></div>
+          </section>
+
+          <section class="panel">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Notifications</p>
+                <h2>Weather alerts</h2>
+              </div>
+              <button type="button" class="primary-button compact" id="notificationButton">Enable permission</button>
+            </div>
+            <div class="alert-list">
+              <label><span>Enable weather notifications</span><input type="checkbox" checked /></label>
+              <label><span>Rain watches</span><input type="checkbox" checked /></label>
+              <label><span>Heat alerts</span><input type="checkbox" checked /></label>
+              <label><span>Cold alerts</span><input type="checkbox" checked /></label>
+              <label><span>Air quality alerts</span><input type="checkbox" checked /></label>
+              <label><span>Daily briefing time</span><time>07:00 AM</time></label>
+            </div>
+          </section>
+        </section>
+
+        <section class="panel atmosphere-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Conditions detail</p>
+              <h2>Live atmosphere breakdown</h2>
+            </div>
+            <div class="layer-pills">
+              <span class="live-layer">Live metrics</span>
+              <span>Updated from current conditions</span>
+            </div>
+          </div>
+
+          <div class="atmosphere-grid">
+            <article>
+              <span>UV index</span>
+              <strong id="uvIndex">--</strong>
+              <p id="uvText">--</p>
+              <div class="meter hot"><i id="uvMeter"></i></div>
+            </article>
+            <article>
+              <span>Humidity</span>
+              <strong id="humidityDetail">--%</strong>
+              <p id="humidityText">--</p>
+              <div class="meter"><i id="humidityMeter"></i></div>
+            </article>
+            <article>
+              <span>Wind</span>
+              <strong id="windDetail">-- km/h</strong>
+              <p id="windDirection">--</p>
+              <div class="wind-compass-modern">
+                <div class="compass-ring"></div>
+                <div class="wind-arrow" id="windArrow"></div>
+                <span class="compass-label n">N</span>
+                <span class="compass-label e">E</span>
+                <span class="compass-label s">S</span>
+                <span class="compass-label w">W</span>
+              </div>
+              <p class="wind-speed-label" id="compassSpeed">-- km/h</p>
+            </article>
+            <article>
+              <span>Visibility</span>
+              <strong id="visibilityDetail">-- km</strong>
+              <p id="visibilityText">--</p>
+              <div class="meter"><i id="visibilityMeter"></i></div>
+            </article>
+          </div>
+
+          <div class="sun-card">
+            <div>
+              <span id="sunLabel">Sunset</span>
+              <strong id="sunMainTime">--</strong>
+            </div>
+            <div class="sun-arc">
+              <div class="arc">
+                <div class="sun-path" id="sunPath"></div>
+              </div>
+              <div class="sun-times">
+                <span id="sunriseArc">--</span>
+                <strong id="solarNoon">--</strong>
+                <span id="sunsetArc">--</span>
+              </div>
+              <small id="sunCountdown">Calculating daylight</small>
+            </div>
+          </div>
+
+          <div class="air-quality">
+            <span>Air quality</span>
+            <strong id="airQuality">--</strong>
+            <p id="airQualityText">Loading air quality from API.</p>
+            <div class="air-bar"><i id="airQualityMeter"></i></div>
+          </div>
+        </section>
+
+        <section class="panel insights-panel">
+          <p class="eyebrow">Decision support</p>
+          <h2>Smart insights</h2>
+          <div class="insight-list" id="insightList"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
